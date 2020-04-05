@@ -11,21 +11,22 @@ import time
 import os
 import pandas as pd
 import numpy as np
-import pickle
+import joblib
 
 app = Flask(__name__)
 
 CORS(app, support_credentials=True)
 
-#df = pd.read_csv("final.csv" ,error_bad_lines=False)
-#model = pickle.loads("model.pickle")
-#
-##Run this block only once and then comment
-#cols = ["id","timestamp"]
-#cols.append(df.cols.tolist())
-#with open('record.csv', 'w', newline='') as file:
-#    writer = csv.writer(file)
-#    writer.writerow(cols)
+df = pd.read_csv("final.csv" ,error_bad_lines=False)
+model = joblib.load('model.pkl')
+
+
+#Run this block only once and then comment
+cols = ["id","timestamp"]
+cols.append(df.columns.tolist())
+with open('record.csv', 'w', newline='') as file:
+    writer = csv.writer(file)
+    writer.writerow(cols)
 
 
 @app.route('/result', methods =['GET'])
@@ -34,10 +35,14 @@ def get_result():
     if(request.method=='GET'):
         inp=[]
         d = request.args
-        for i in l:
+        for i in d:
             inp.append(d[i])
-        result = model.predict(inp)
+        result = model.predict([inp])[0]
         print(result)
+        if(result==1.0):
+            result="Stroke"
+        else:
+            result="No Stroke"
         return jsonify(result=result), 200
     else:
         return jsonify(), 405
