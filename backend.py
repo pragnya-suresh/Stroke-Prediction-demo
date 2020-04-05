@@ -44,11 +44,12 @@ def get_variables(category):
 def get_registration_variables():
     """ Needs to return {vars: list1, descriptions: list2}
     """
-    l = ['nsrrid','estrgn1', 'progst1', 'htnmed1', 'anar1a1', 'lipid1', 'ohga1', 'insuln1', 'sympth1', 'tca1', 'asa1', 'nsaid1', 'benzod1', 'premar1', 'pdei1', 'ntca1', 'alpha1', 'alphad1', 'anar1b1', 'anar1c1', 'anar31', 'ace1', 'aced1', 'ntg1']
     if request.method == 'GET':
+
+        l = ['nsrrid', 'timestamp', 'ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'estrgn1', 'lipid1', 'minfa10', 'cgrtts10', 'climb125', 'wksblk25', 'wk1blk25', 'bathe25', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1', 'age_s1']
+        descriptions = ['NSRR Subject ID', 'Appointment number', 'Ventricular rate', 'QRS Axis', 'Average Central Apnea length w/ arousals (Non-rapid eye movement sleep (NREM), Supine, all oxygen desaturations)', 'Average Central Apnea length w/ arousals (Non-rapid eye movement sleep (NREM), Non-supine, all oxygen desaturations)', 'Average Central Apnea length (Rapid eye movement sleep (REM), Supine, >=2% oxygen desaturation)', 'Average Central Apnea length with >=2% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Average Central Apnea length with >=3% oxygen desaturation or arousal (Non-rapid eye movement sleep (NREM), Non-supine)', 'Average Central Apnea length with >=4% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Average Central Apnea length with >=5% oxygen desaturation or arousal (Non-rapid eye movement sleep (NREM), Supine)', 'Number of Obstructive Apnea with >=5% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Estrogens, Excluding Vaginal Creams ', 'Any Lipid-Lowering Medication ', 'Morning Survey : minutes to fall asleep', 'Morning Survey : cigarettes before bed', 'Quality of Life (QOL) : Health limits climbing one flight of stairs', 'Quality of Life (QOL) : Health limits walking several blocks', 'Quality of Life (QOL) : Health limits walking one block', 'Quality of Life (QOL) : Health limits bathing and dressing', 'Short Form 36 Health Survey (SF-36) Calculated : Physical Functioning Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : General Health Perceptions Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : Vitality Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : Mental Health Index Standardized Score', 'Age at Sleep Heart Health Study Visit One (SHHS1)']
         
-        desc = ['lala' for i in l]
-        d = {'registration_variables': l, 'descriptions':desc}
+        d = {'registration_variables': l, 'descriptions':descriptions}
 
         return jsonify(d), 200
     
@@ -61,10 +62,6 @@ def get_registration_variables():
         for i in l:
             user_data[i] = request.form[i]
             values.append(request.form[i])
-        
-        week_no = 10
-        user_data['week_no'] = week_no
-        values = values[:1] + [week_no] + values[1:]
 
         df = pd.read_csv('record.csv')
         row_index = df.shape[0]
@@ -94,6 +91,9 @@ def get_patient_ids():
 @app.route('/predict_stroke', methods = ['GET'])
 def predict_stroke():
     """Predicts the record.csv's last entry result """
+    """Todo : 1) api: /result should be changed to this
+              2) is prediction is 1, return "yes" else return "no"
+    """
     if request.method == 'GET':
         df = pd.read_csv('record.csv')
         attributes = list(df.loc[df.shape[0]-1])
@@ -105,6 +105,7 @@ def predict_stroke():
     else:
         return jsonify({}),405
 
+# pragnya this should be changed.... look at the above api
 @app.route('/result', methods =['GET'])
 @cross_origin(supports_credentials=True)
 def get_result():
@@ -122,7 +123,10 @@ def get_result():
 
 @app.route('/var_min_max/<attr_name>', methods =['GET'])
 def get_var_min_max(attr_name):
-
+    """Returns timeseries of an attribute along with min and max values
+    """
+    """ Todo: /healthstatus is changed to this. Make sure the return type format is as follows (UI is dependent on it) 
+    """
     if request.method == 'GET':
         d = {'ts1': 9, 'ts2': 15, 'ts3':21, 'ts4':17, 'ts5': 19, 'min': 12, 'max': 16}
         d = {'labels': ['ts1', 'ts2', 'ts3', 'ts4', 'ts5'], 'data': [9, 15, 21, 17, 19]}
@@ -134,7 +138,7 @@ def get_var_min_max(attr_name):
     else:
         return jsonify({}), 405
 
-
+# change this to get_var_min_max
 @app.route('/healthstatus', methods =['GET'])
 @cross_origin(supports_credentials=True)
 def get_status():
