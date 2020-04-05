@@ -69,10 +69,10 @@ def get_status():
         df_stddev_trans = df_stddev.loc[:, df_stddev.columns != param]
         #transform the record by the dividing each value by the std deviation
         df_patient_trans = df_patient/df_stddev_trans
-        print(len(X),len(df_patient_trans))
         attr = X.columns.tolist()
-        print(len(attr),len(df_patient_trans.columns.tolist()))
-        neigh = NearestNeighbors(n_neighbors=10)
+        print(len(attr)==en(df_patient_trans.columns.tolist()))
+        n_neighbors = 10
+        neigh = NearestNeighbors(n_neighbors=n_neighbors)
         d = {}
         for index, r in df_patient_trans.iterrows():
             row=[]
@@ -84,7 +84,7 @@ def get_status():
             neighbours = neigh.kneighbors([row])
             #gives a tuple(dist,index)
             ind = []
-            for i in range(10):
+            for i in range(n_neighbors):
                 ind.append(neighbours[1][0][i])
             df_nearest = df.iloc[ind]
             inner_d["min"] = df_nearest[param].min()
