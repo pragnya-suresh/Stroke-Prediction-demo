@@ -61,14 +61,17 @@ def get_status():
         
         X = df_transformed.loc[:, df_transformed.columns != param]
         df_record = pd.read_csv("record.csv")
+        print(df_record)
         df_patient = df.loc[df['id'] == id]
         df_patient = df_patient.loc[:, df_patient.columns != 'id']
         df_patient = df_patient.loc[:, df_patient.columns != 'timestamp']
         df_patient = df_patient.loc[:, df_patient.columns != param]
-        df_patient_trans = df_patient_trans/df_stddev
-        print(len(x),len(df_patient))
-        attr = df.columns.tolist()
-        #transform the dataset by the dividing each value by the std deviation
+        df_stddev_trans = df_stddev.loc[:, df_stddev.columns != param]
+        #transform the record by the dividing each value by the std deviation
+        df_patient_trans = df_patient/df_stddev_trans
+        print(len(X),len(df_patient_trans))
+        attr = X.columns.tolist()
+        print(len(attr),len(df_patient_trans.columns.tolist()))
         neigh = NearestNeighbors(n_neighbors=10)
         d = {}
         for index, r in df_patient_trans.iterrows():
@@ -88,7 +91,7 @@ def get_status():
             inner_d["param"] = param
             inner_d["max"] = df_nearest[param].max()
             d[ts[index]] = inner_d
-            
+        print("result d:",d)
         #for each row in resulting df,for each attr, find 10 rows with least deviation w.r.t. other attributes, find min and max- return attr_val, min,max
         #return as dictionary of dictionaries
         #outer dictionary key will be timestamp
