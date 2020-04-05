@@ -24,11 +24,11 @@ model = joblib.load('model.pkl')
 
 
 #Run this block only once and then comment
-cols = ["id","timestamp"]
-cols.append(df.columns.tolist())
-with open('record.csv', 'w', newline='') as file:
-    writer = csv.writer(file)
-    writer.writerow(cols)
+# cols = ["id","timestamp"]
+# cols.append(df.columns.tolist())
+# with open('record.csv', 'w', newline='') as file:
+#     writer = csv.writer(file)
+#     writer.writerow(cols)
 
 @app.route('/register_patient', methods=['GET', 'POST'])
 def get_registration_variables():
