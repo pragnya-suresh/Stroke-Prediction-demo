@@ -15,6 +15,58 @@
 
 <script>
     let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'http://0.0.0.0:5000/predict_stroke');
+    xhr.responseType = 'json';
+    xhr.send();
+
+    xhr.onload = function() {
+        if (xhr.status != 200) { // analyze HTTP status of the response
+            alert(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        } else { // show the result
+            //alert(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+            //console.log(xhr.responseText);
+            json_response = xhr.response
+            // registration_vars = json_response['registration_variables']
+            // console.log(registration_vars)
+            setup_result(json_response);
+            get_graph_buttons()
+            }
+    };
+
+    
+function setup_result(json_response){
+    
+    result = json_response['prediction']
+    //var_descriptions = json_response['descriptions']
+    // arr = ['nsrrid', 'week_no'];
+    // arr = ['nsrrid'];
+    // registration_vars = arr.concat(registration_vars)
+    
+    // var_descriptions = ['Unique ID of patient'].concat(var_descriptions)
+
+    form_div = document.createElement('div')
+    form_div.class = "row"
+
+    s = '<div class="col-12">\
+                        <div class="card">\
+                            <div class="card-body">\
+                                <h1 align="center">'+result+'</h1>\
+                            </div>\
+                        </div>\
+                    </div>'
+
+    
+
+    form_div.innerHTML = s
+    
+    page = document.getElementsByClassName("container-fluid")[0]
+    page.insertBefore(form_div, page.childNodes[0]);
+    // page.appendChild(form_div)
+
+}
+
+function get_graph_buttons(){
+    let xhr = new XMLHttpRequest();
     xhr.open('GET', 'http://0.0.0.0:5000/register_patient');
     xhr.responseType = 'json';
     xhr.send();
@@ -26,59 +78,170 @@
             //alert(`Done, got ${xhr.response.length} bytes`); // responseText is the server
             //console.log(xhr.responseText);
             json_response = xhr.response
-            registration_vars = json_response['registration_variables']
-            console.log(registration_vars)
-            setup_registration_form(json_response);
-        }
-};
+            // registration_vars = json_response['registration_variables']
+            // console.log(registration_vars)
+            setup_graph_buttons(json_response);
+            }
+    };
+}
 
-function setup_registration_form(json_response){
-    
-    registration_vars = json_response['registration_variables']
-    var_descriptions = json_response['descriptions']
-    // arr = ['nsrrid', 'week_no'];
-    // arr = ['nsrrid'];
-    // registration_vars = arr.concat(registration_vars)
-    
-    // var_descriptions = ['Unique ID of patient'].concat(var_descriptions)
+function setup_graph_buttons(json_response){
+    row_div = document.createElement('div');
+    row_div.class = 'row'
 
-    form_div = document.createElement('div')
-    form_div.class = "row"
+    attributes = json_response['registration_variables']
+
 
     s = '<div class="col-lg-12">\
-                               <div class="card">\
+                        <div class="card">\
                             <div class="card-body">\
-                                <h4 class="card-title">Patient Registration Form</h4>\
-                                <div class="basic-form">\
-                                    <form role="form" method="POST" action="http://0.0.0.0:5000/register_patient" target="_blank">\n'
+                                <h4 class="card-title">Graphs</h4>\
+                                <div class="outline-button-sizes">'
+    
+    for (index = 0; index < attributes.length; index++) { 
+        s += '<button type="button" id='+attributes[index]+' onclick="get_chart(this.id)" class="btn mb-1 btn-outline-primary btn-lg">'+attributes[index]+'</button>'
 
-    for (index = 0; index < registration_vars.length; index++) { 
-        k = '<div class="form-group row">\
-                <label class="col-sm-2 col-form-label">'+ registration_vars[index] +'</label>\
-                <div class="col-sm-10">\
-                    <input type="text" name="'+registration_vars[index]+'" class="form-control" placeholder="'+var_descriptions[index]+'">\
-                </div>\
-            </div>\n' 
-        
-        s += k
     }
-    s += '<div class="form-group row">\
-                                <div class="col-sm-10">\
-                                    <button onclick="window.location.href = \'predict_stroke.html\';" type="submit" class="btn btn-dark">Register</button>\
-                                </div>\
-                            </div>\
-                        </form>\
-                    </div>\
-                            </div>\
-                        </div>\
-                        </div>'
+    
+    s += '</div>\
+        </div>\
+        </div>\
+        </div>'
+                                
 
-    form_div.innerHTML = s
+
+    row_div.innerHTML = s
     
     page = document.getElementsByClassName("container-fluid")[0]
-    page.appendChild(form_div)
+    page.appendChild(row_div)
 
 }
+
+
+
+function get_chart(attr_name){
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', 'http://0.0.0.0:5000/var_min_max/'+attr_name);
+    xhr.responseType = 'json';
+    xhr.send();
+
+    xhr.onload = function() {
+        if (xhr.status != 200) { // analyze HTTP status of the response
+            alert(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+        } else { // show the result
+            //alert(`Done, got ${xhr.response.length} bytes`); // responseText is the server
+            //console.log(xhr.responseText);
+            json_response = xhr.response
+            // registration_vars = json_response['registration_variables']
+            // console.log(registration_vars)
+            
+            chart_div = document.getElementById('showChart');
+
+            chart_div.innerHTML = '<h4 class="card-title">'+attr_name+'</h4>\
+                                <canvas id="sales-chart" width="800" height="600"></canvas>'
+
+            var ctx = document.getElementById("sales-chart");
+            ctx.height = 400;
+            var myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: json_response['labels'],
+                    type: 'line',
+                    defaultFontFamily: 'Montserrat',
+                    datasets: [{
+                        label: attr_name,
+                        data: json_response['data'],
+                        backgroundColor: 'transparent',
+                        borderColor: '#7571F9',
+                        borderWidth: 3,
+                        pointStyle: 'circle',
+                        pointRadius: 5,
+                        pointBorderColor: 'transparent',
+                        pointBackgroundColor: '#7571F9',
+
+                    }, {
+                        label: "Minumum bound",
+                        data: json_response['min'],
+                        backgroundColor: 'transparent',
+                        borderColor: '#4d7cff',
+                        borderWidth: 3,
+                        pointStyle: 'circle',
+                        pointRadius: 5,
+                        pointBorderColor: 'transparent',
+                        pointBackgroundColor: '#4d7cff',
+                    }, {
+                        label: "Maximum bound",
+                        data: json_response['max'],
+                        backgroundColor: 'transparent',
+                        borderColor: '#173e43',
+                        borderWidth: 3,
+                        pointStyle: 'circle',
+                        pointRadius: 5,
+                        pointBorderColor: 'transparent',
+                        pointBackgroundColor: '#173e43',
+                    }]
+                },
+                options: {
+                    responsive: true,
+
+                    tooltips: {
+                        mode: 'index',
+                        titleFontSize: 12,
+                        titleFontColor: '#000',
+                        bodyFontColor: '#000',
+                        backgroundColor: '#fff',
+                        titleFontFamily: 'Montserrat',
+                        bodyFontFamily: 'Montserrat',
+                        cornerRadius: 3,
+                        intersect: false,
+                    },
+                    legend: {
+                        labels: {
+                            usePointStyle: true,
+                            fontFamily: 'Montserrat',
+                        },
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            scaleLabel: {
+                                display: false,
+                                labelString: 'Month'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Value'
+                            }
+                        }]
+                    },
+                    title: {
+                        display: false,
+                        text: 'Normal Legend'
+                    }
+                }
+            });
+
+            }
+    };
+
+
+    
+
+}
+
+
 
 </script>
 
@@ -475,9 +638,21 @@ function setup_registration_form(json_response){
             <!-- row -->
 
             <div class="container-fluid">
+                
                 <div class="row">
-                    
+            
+                </div>  
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div id="showChart" class="card-body">
+                                
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
             <!-- #/ container -->
         </div>
@@ -510,6 +685,10 @@ function setup_registration_form(json_response){
     <script src="js/settings.js"></script>
     <script src="js/gleek.js"></script>
     <script src="js/styleSwitcher.js"></script>
+
+    <script src="./plugins/chart.js/Chart.bundle.min.js"></script>
+    <!-- <script src="attribute_chart.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 </body>
 
