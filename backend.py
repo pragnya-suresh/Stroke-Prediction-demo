@@ -70,7 +70,7 @@ def get_status():
         #transform the record by the dividing each value by the std deviation
         df_patient_trans = df_patient/df_stddev_trans
         attr = X.columns.tolist()
-        print(len(attr)==en(df_patient_trans.columns.tolist()))
+        print(len(attr)==len(df_patient_trans.columns.tolist()))
         n_neighbors = 10
         neigh = NearestNeighbors(n_neighbors=n_neighbors)
         d = {}
