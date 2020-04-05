@@ -18,6 +18,8 @@ app = Flask(__name__)
 CORS(app, support_credentials=True)
 
 df = pd.read_csv("final.csv" ,error_bad_lines=False)
+df_transformed = pd.read_csv("final_transformed.csv" ,error_bad_lines=False)
+df_stddev = pd.read_csv("std_dev.csv" ,error_bad_lines=False)
 model = joblib.load('model.pkl')
 
 
@@ -56,18 +58,20 @@ def get_status():
         print("id:",id)
         ts =df_patient[df_patient['id']==id]['timestamp'].values
         #retrive all the records with this id from the csv
-        X = df.loc[:, df.columns != 'stroke']
-        X = X.loc[:, df.columns != param]
+        
+        X = df_transformed.loc[:, df_transformed.columns != param]
         df_record = pd.read_csv("record.csv")
         df_patient = df.loc[df['id'] == id]
         df_patient = df_patient.loc[:, df_patient.columns != 'id']
         df_patient = df_patient.loc[:, df_patient.columns != 'timestamp']
         df_patient = df_patient.loc[:, df_patient.columns != param]
-        prin(len(x),len(df_patient))
+        df_patient_trans = df_patient_trans/df_stddev
+        print(len(x),len(df_patient))
         attr = df.columns.tolist()
+        #transform the dataset by the dividing each value by the std deviation
         neigh = NearestNeighbors(n_neighbors=10)
         d = {}
-        for index, r in df_patient.iterrows():
+        for index, r in df_patient_trans.iterrows():
             row=[]
             inner_d={}
             for i in attr:
