@@ -67,7 +67,7 @@ function setup_result(json_response){
 
 function get_graph_buttons(){
     let xhr = new XMLHttpRequest();
-    xhr.open('GET', 'http://0.0.0.0:5000/register_patient');
+    xhr.open('GET', 'http://0.0.0.0:5000/graph_buttons');
     xhr.responseType = 'json';
     xhr.send();
 
@@ -90,7 +90,6 @@ function setup_graph_buttons(json_response){
     row_div.class = 'row'
 
     attributes = json_response['registration_variables']
-
 
     s = '<div class="col-lg-12">\
                         <div class="card">\
@@ -164,22 +163,23 @@ function get_chart(attr_name){
                         label: "Minumum bound",
                         data: json_response['min'],
                         backgroundColor: 'transparent',
-                        borderColor: '#4d7cff',
+                        borderColor: '#ec0c38',
                         borderWidth: 3,
                         pointStyle: 'circle',
                         pointRadius: 5,
                         pointBorderColor: 'transparent',
-                        pointBackgroundColor: '#4d7cff',
+                        pointBackgroundColor: '#ec0c38',
                     }, {
                         label: "Maximum bound",
                         data: json_response['max'],
                         backgroundColor: 'transparent',
-                        borderColor: '#173e43',
+                        // borderColor: '#173e43',
+                        borderColor: '#ec0c38',
                         borderWidth: 3,
                         pointStyle: 'circle',
                         pointRadius: 5,
                         pointBorderColor: 'transparent',
-                        pointBackgroundColor: '#173e43',
+                        pointBackgroundColor: '#ec0c38',
                     }]
                 },
                 options: {

@@ -14,7 +14,7 @@ print(len(l))
 
 df_trans = df.div(df.std(axis=0))
 #print(df_trans)
-df_trans.to_csv("final_transformed.csv")
+df_trans.to_csv("final_transformed.csv", index=False)
 
 #check
 df_av = df["avcarbp2"].div(df["avcarbp2"].std())

@@ -50,7 +50,7 @@ function setup_registration_form(json_response){
                             <div class="card-body">\
                                 <h4 class="card-title">Patient Registration Form</h4>\
                                 <div class="basic-form">\
-                                    <form role="form" method="POST" action="http://0.0.0.0:5000/register_patient" target="_blank">\n'
+                                    <form id="regis_form" role="form" method="POST" action="http://0.0.0.0:5000/register_patient" target="predict_stroke.html">\n'
 
     for (index = 0; index < registration_vars.length; index++) { 
         k = '<div class="form-group row">\
@@ -62,9 +62,9 @@ function setup_registration_form(json_response){
         
         s += k
     }
-    s += '<div class="form-group row">\
+    s += '<div id="report_div" class="form-group row">\
                                 <div class="col-sm-10">\
-                                    <button onclick="window.location.href = \'predict_stroke.html\';" type="submit" class="btn btn-dark">Predict</button>\
+                                    <button onclick="view_report()" type="submit" class="btn btn-dark">Predict</button>\
                                 </div>\
                             </div>\
                         </form>\
@@ -77,6 +77,31 @@ function setup_registration_form(json_response){
     
     page = document.getElementsByClassName("container-fluid")[0]
     page.appendChild(form_div)
+
+}
+
+function view_report(){
+
+    var x = document.getElementById("regis_form");
+    var txt = "";
+    var i;
+    for (i = 0; i < x.length; i++) {
+    txt = txt + x.elements[i].name+"="+ x.elements[i].value + "&";
+    }
+    txt = txt.slice(0, txt.length - 1)
+    console.log(txt)
+
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', 'http://0.0.0.0:5000/register_patient');
+    xhr.responseType = 'json';
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send(txt);
+
+    d = document.getElementById('report_div')
+    d.innerHTML += '<div class="col-sm-10">\
+                                    <button onclick="window.location.href = \'predict_stroke.html\';" class="btn btn-dark">View Report</button>\
+                                </div>'
+
 
 }
 

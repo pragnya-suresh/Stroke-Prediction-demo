@@ -1,1 +1,3 @@
-nsrrid,timestamp,ventrate,qrs,avcanba,avcanoa,avcarbp2,avcaroa2,avcanoa3,avcaroa4,avcanba5,oaroa5,estrgn1,lipid1,minfa10,cgrtts10,climb125,wksblk25,wk1blk25,bathe25,rawpf_s1,rawgh_s1,rawvt_s1,mh_s1,age_s1
+nsrrid,ventrate,qrs,avcanba,avcanoa,avcarbp2,avcaroa2,avcanoa3,avcaroa4,avcanba5,oaroa5,estrgn1,lipid1,minfa10,cgrtts10,climb125,wksblk25,wk1blk25,bathe25,rawpf_s1,rawgh_s1,rawvt_s1,mh_s1,age_s1,stroke
+1.0,60.0,103.0,19.2822072435897,19.8742410625,19.354928,15.1527777777778,18.4804205254237,15.953231306122401,19.2237791789474,0.0,0.0,0.0,25.0,0.0,0.0,3.0,2.0,0.0,10.0,23.0,8.0,92.0,69.0,0.0
+1.0,39.0,1.0,19.2822072435897,19.8742410625,19.354928,15.1527777777778,18.4804205254237,15.953231306122401,19.2237791789474,0.0,0.0,0.0,30.0,0.0,1.0,2.0,2.0,1.0,15.0,18.4,14.0,80.0,82.0,1.0

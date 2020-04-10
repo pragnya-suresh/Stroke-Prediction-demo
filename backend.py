@@ -23,6 +23,18 @@ df_stddev = pd.read_csv("std_dev.csv" ,error_bad_lines=False)
 model = joblib.load('model.pkl')
 
 
+# creating the record.csv if it does not exist
+file_exists = os.path.isfile('record.csv')
+
+if not file_exists:
+    print("Creating new record.csv")
+    cols = ['nsrrid', 'ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'estrgn1', 'lipid1', 'minfa10', 'cgrtts10', 'climb125', 'wksblk25', 'wk1blk25', 'bathe25', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1', 'age_s1', 'stroke']
+    with open('record.csv', 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(cols)
+
+
+
 #Run this block only once and then comment
 # cols = ["id","timestamp"]
 # cols.append(df.columns.tolist())
@@ -34,10 +46,10 @@ model = joblib.load('model.pkl')
 def get_registration_variables():
     """ Needs to return {vars: list1, descriptions: list2}
     """
+    l = ['nsrrid', 'ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'estrgn1', 'lipid1', 'minfa10', 'cgrtts10', 'climb125', 'wksblk25', 'wk1blk25', 'bathe25', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1', 'age_s1']
     if request.method == 'GET':
-
-        l = ['nsrrid', 'timestamp', 'ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'estrgn1', 'lipid1', 'minfa10', 'cgrtts10', 'climb125', 'wksblk25', 'wk1blk25', 'bathe25', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1', 'age_s1']
-        descriptions = ['NSRR Subject ID', 'Appointment number', 'Ventricular rate', 'QRS Axis', 'Average Central Apnea length w/ arousals (Non-rapid eye movement sleep (NREM), Supine, all oxygen desaturations)', 'Average Central Apnea length w/ arousals (Non-rapid eye movement sleep (NREM), Non-supine, all oxygen desaturations)', 'Average Central Apnea length (Rapid eye movement sleep (REM), Supine, >=2% oxygen desaturation)', 'Average Central Apnea length with >=2% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Average Central Apnea length with >=3% oxygen desaturation or arousal (Non-rapid eye movement sleep (NREM), Non-supine)', 'Average Central Apnea length with >=4% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Average Central Apnea length with >=5% oxygen desaturation or arousal (Non-rapid eye movement sleep (NREM), Supine)', 'Number of Obstructive Apnea with >=5% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Estrogens, Excluding Vaginal Creams ', 'Any Lipid-Lowering Medication ', 'Morning Survey : minutes to fall asleep', 'Morning Survey : cigarettes before bed', 'Quality of Life (QOL) : Health limits climbing one flight of stairs', 'Quality of Life (QOL) : Health limits walking several blocks', 'Quality of Life (QOL) : Health limits walking one block', 'Quality of Life (QOL) : Health limits bathing and dressing', 'Short Form 36 Health Survey (SF-36) Calculated : Physical Functioning Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : General Health Perceptions Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : Vitality Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : Mental Health Index Standardized Score', 'Age at Sleep Heart Health Study Visit One (SHHS1)']
+        
+        descriptions = ['NSRR Subject ID', 'Ventricular rate', 'QRS Axis', 'Average Central Apnea length w/ arousals (Non-rapid eye movement sleep (NREM), Supine, all oxygen desaturations)', 'Average Central Apnea length w/ arousals (Non-rapid eye movement sleep (NREM), Non-supine, all oxygen desaturations)', 'Average Central Apnea length (Rapid eye movement sleep (REM), Supine, >=2% oxygen desaturation)', 'Average Central Apnea length with >=2% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Average Central Apnea length with >=3% oxygen desaturation or arousal (Non-rapid eye movement sleep (NREM), Non-supine)', 'Average Central Apnea length with >=4% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Average Central Apnea length with >=5% oxygen desaturation or arousal (Non-rapid eye movement sleep (NREM), Supine)', 'Number of Obstructive Apnea with >=5% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Estrogens, Excluding Vaginal Creams ', 'Any Lipid-Lowering Medication ', 'Morning Survey : minutes to fall asleep', 'Morning Survey : cigarettes before bed', 'Quality of Life (QOL) : Health limits climbing one flight of stairs', 'Quality of Life (QOL) : Health limits walking several blocks', 'Quality of Life (QOL) : Health limits walking one block', 'Quality of Life (QOL) : Health limits bathing and dressing', 'Short Form 36 Health Survey (SF-36) Calculated : Physical Functioning Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : General Health Perceptions Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : Vitality Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : Mental Health Index Standardized Score', 'Age at Sleep Heart Health Study Visit One (SHHS1)']
         
         d = {'registration_variables': l, 'descriptions':descriptions}
 
@@ -51,8 +63,14 @@ def get_registration_variables():
         values = []
         for i in l:
             user_data[i] = request.form[i]
-            values.append(request.form[i])
+            values.append(float(request.form[i]))
 
+        attributes = np.array(values[1:])
+        attributes = attributes.reshape(1,-1)
+        result = model.predict(attributes)[0]
+        user_data['stroke'] = result
+
+        values.append(result)
         df_record = pd.read_csv('record.csv')
         row_index = df_record.shape[0]
 
@@ -60,9 +78,18 @@ def get_registration_variables():
 
         df_record.to_csv('record.csv', index=False)
 
-        return jsonify({}), 201
+        return jsonify(user_data), 201
     else:
         return jsonify(), 405
+
+@app.route('/graph_buttons', methods=['GET'])
+def get_graph_buttons():
+    l = ['ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'estrgn1', 'lipid1', 'minfa10', 'cgrtts10', 'climb125', 'wksblk25', 'wk1blk25', 'bathe25', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1']
+    if request.method == 'GET':
+        
+        d = {'registration_variables': l}
+
+        return jsonify(d), 200
 
 # modification
 @app.route('/result', methods =['GET'])
@@ -71,15 +98,15 @@ def get_result():
     """Predicts the record.csv's last entry result """
     if(request.method=='GET'):
         df = pd.read_csv('record.csv')
-        attributes = list(df.loc[df.shape[0]-1])
-        attributes = np.array(attributes)
-        result = model.predict(attributes)[0]
-        print(result)
+        
+        #latest entry result
+        result = list(df["stroke"])[-1]
+
         if(result==1.0):
             result="Stroke"
         else:
             result="No Stroke"
-        return jsonify(result=result), 200
+        return jsonify({'prediction':result}), 200
     else:
         return jsonify(), 405
 
@@ -102,55 +129,67 @@ def get_result():
 #     else:
 #         return jsonify(), 405
 
+# @app.route('/var_min_max/<attr_name>', methods =['GET'])
+# def get_var_min_max(attr_name):
+#     """Returns timeseries of an attribute along with min and max values
+#     """
+#     """ Todo: /healthstatus is changed to this. Make sure the return type format is as follows (UI is dependent on it) 
+#     """
+#     if request.method == 'GET':
+#         d = {'ts1': 9, 'ts2': 15, 'ts3':21, 'ts4':17, 'ts5': 19, 'min': 12, 'max': 16}
+#         d = {'labels': ['ts1', 'ts2', 'ts3', 'ts4', 'ts5'], 'data': [9, 15, 21, 17, 19]}
+
+#         d['min'] = [12 for i in range(len(d['labels']))]
+#         d['max'] = [16 for i in range(len(d['labels']))]
+
+#         return jsonify(d), 200
+#     else:
+#         return jsonify({}), 405
+
 @app.route('/var_min_max/<attr_name>', methods =['GET'])
-def get_var_min_max(attr_name):
-    """Returns timeseries of an attribute along with min and max values
-    """
-    """ Todo: /healthstatus is changed to this. Make sure the return type format is as follows (UI is dependent on it) 
-    """
-    if request.method == 'GET':
-        d = {'ts1': 9, 'ts2': 15, 'ts3':21, 'ts4':17, 'ts5': 19, 'min': 12, 'max': 16}
-        d = {'labels': ['ts1', 'ts2', 'ts3', 'ts4', 'ts5'], 'data': [9, 15, 21, 17, 19]}
-
-        d['min'] = [12 for i in range(len(d['labels']))]
-        d['max'] = [16 for i in range(len(d['labels']))]
-
-        return jsonify(d), 200
-    else:
-        return jsonify({}), 405
-
-# change this to get_var_min_max
-@app.route('/healthstatus', methods =['GET'])
 @cross_origin(supports_credentials=True)
-def get_status():
+def get_status(attr_name):
     if(request.method=='GET'):
-        id = request.args.get("id")
-        param = request.args.get("param")
-        print("id:",id)
-        ts =df_patient[df_patient['id']==id]['timestamp'].values
-        #retrive all the records with this id from the csv
         
+        #retrive all the records with this id from the csv
+        param = attr_name
         X = df_transformed.loc[:, df_transformed.columns != param]
         df_record = pd.read_csv("record.csv")
-        print(df_record)
-        df_patient = df.loc[df['id'] == id]
-        df_patient = df_patient.loc[:, df_patient.columns != 'id']
-        df_patient = df_patient.loc[:, df_patient.columns != 'timestamp']
+        # print(df_record)
+
+        nsrrid = list(df_record["nsrrid"])[-1]
+        
+
+        df_patient = df_record.loc[df_record['nsrrid'] == nsrrid]
+
+        attr_data = list(df_patient[param])
+        
+        df_patient = df_patient.loc[:, df_patient.columns != 'nsrrid']
         df_patient = df_patient.loc[:, df_patient.columns != param]
+        # print(df_patient.head(), end="******************\n")
         df_stddev_trans = df_stddev.loc[:, df_stddev.columns != param]
+        # print(df_stddev_trans.head(), end="******************\n")
         #transform the record by the dividing each value by the std deviation
-        df_patient_trans = df_patient/df_stddev_trans
+        # df_patient_trans = df_patient/df_stddev_trans
+        df_patient_trans = df_patient.div(df_stddev_trans.iloc[0])
         attr = X.columns.tolist()
-        print(len(attr)==len(df_patient_trans.columns.tolist()))
+        # print(attr)
+        # print(len(attr)==len(df_patient_trans.columns.tolist()))
         n_neighbors = 10
         neigh = NearestNeighbors(n_neighbors=n_neighbors)
-        d = {}
+        d = dict()
+        d['data'] = attr_data
+        d['labels'] = []
+        d['min'] = []
+        d['max'] = []
         for index, r in df_patient_trans.iterrows():
+            # print(index)
+            d['labels'].append(index)
             row=[]
-            inner_d={}
+            # inner_d={}
             for i in attr:
-              row.append(r[i])
-            print(row)
+                row.append(r[i])
+            # print(row)
             neigh.fit(X)
             neighbours = neigh.kneighbors([row])
             #gives a tuple(dist,index)
@@ -158,37 +197,42 @@ def get_status():
             for i in range(n_neighbors):
                 ind.append(neighbours[1][0][i])
             df_nearest = df.iloc[ind]
-            inner_d["min"] = df_nearest[param].min()
-            inner_d["param"] = param
-            inner_d["max"] = df_nearest[param].max()
-            d[ts[index]] = inner_d
-        print("result d:",d)
+            # inner_d["min"] = df_nearest[param].min()
+            # inner_d["param"] = param
+            # inner_d["max"] = df_nearest[param].max()
+        
+            # d[index] = inner_d
+
+            d['min'].append(df_nearest[param].min())
+            d['max'].append(df_nearest[param].max())
+
+        # print("result d:",d)
         #for each row in resulting df,for each attr, find 10 rows with least deviation w.r.t. other attributes, find min and max- return attr_val, min,max
         #return as dictionary of dictionaries
         #outer dictionary key will be timestamp
-        #d["ts1"] = {"attr1":x,"min":y,"max":z}
-        #d["ts2"] = {"attr2":x,"min":y,"max":z}
+        #d[0] = {"attr1":x,"min":y,"max":z}
+        #d[1] = {"attr2":x,"min":y,"max":z}
         
-        return jsonify(result=d), 200
+        return jsonify(d), 200
     else:
         return jsonify(), 405
 
-#input- id, timestamp, attributes
-@app.route('/store', methods =['POST'])
-@cross_origin(supports_credentials=True)
-def store():
-    if(request.method=='POST'):
-        inp=[]
-        d = list(request.forms.keys())[0]
-        print("d:",d)
+# #input- id, timestamp, attributes
+# @app.route('/store', methods =['POST'])
+# @cross_origin(supports_credentials=True)
+# def store():
+#     if(request.method=='POST'):
+#         inp=[]
+#         d = list(request.forms.keys())[0]
+#         print("d:",d)
 
-        with open('record.csv', 'a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([d])
+#         with open('record.csv', 'a', newline='') as file:
+#             writer = csv.writer(file)
+#             writer.writerow([d])
         
-        return jsonify(result=result), 200
-    else:
-        return jsonify(), 405
+#         return jsonify(result=result), 200
+#     else:
+#         return jsonify(), 405
 
 if(__name__=="__main__"):
     app.run(host='0.0.0.0')
