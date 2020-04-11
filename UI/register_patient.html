@@ -52,6 +52,8 @@ function setup_registration_form(json_response){
                                 <div class="basic-form">\
                                     <form id="regis_form" role="form" method="POST" action="http://0.0.0.0:5000/register_patient" target="predict_stroke.html">\n'
 
+    default_vals = [1,39.0,1.0,19.282207243589700,19.8742410625,19.354928,15.152777777777800,18.480420525423700,15.953231306122400,19.223779178947400,0.0,0.0,0.0,30.0,0.0,1.0,2.0,2.0,1.0,15.0,18.4,14.0,80.0,82]
+
     for (index = 0; index < registration_vars.length; index++) { 
         k = '<div class="form-group row">\
                 <label class="col-sm-2 col-form-label">'+ registration_vars[index] +'</label>\
@@ -64,7 +66,7 @@ function setup_registration_form(json_response){
     }
     s += '<div id="report_div" class="form-group row">\
                                 <div class="col-sm-10">\
-                                    <button onclick="view_report()" type="submit" class="btn btn-dark">Predict</button>\
+                                    <button onclick="view_report()" type="submit" class="btn btn-dark">Submit</button>\
                                 </div>\
                             </div>\
                         </form>\

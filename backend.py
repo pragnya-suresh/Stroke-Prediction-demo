@@ -84,7 +84,7 @@ def get_registration_variables():
 
 @app.route('/graph_buttons', methods=['GET'])
 def get_graph_buttons():
-    l = ['ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'estrgn1', 'lipid1', 'minfa10', 'cgrtts10', 'climb125', 'wksblk25', 'wk1blk25', 'bathe25', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1']
+    l = ['ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1']
     if request.method == 'GET':
         
         d = {'registration_variables': l}
