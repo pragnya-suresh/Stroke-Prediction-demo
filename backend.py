@@ -12,12 +12,14 @@ import os
 import pandas as pd
 import numpy as np
 import joblib
+import json
 
 app = Flask(__name__)
 
 CORS(app, support_credentials=True)
 
 df = pd.read_csv("final.csv" ,error_bad_lines=False)
+
 df_transformed = pd.read_csv("final_transformed.csv" ,error_bad_lines=False)
 df_stddev = pd.read_csv("std_dev.csv" ,error_bad_lines=False)
 model = joblib.load('model.pkl')
@@ -145,6 +147,9 @@ def get_result():
 #         return jsonify(d), 200
 #     else:
 #         return jsonify({}), 405
+def convert(o):
+    if isinstance(o, np.int64):
+        return int(o)
 
 @app.route('/var_min_max/<attr_name>', methods =['GET'])
 @cross_origin(supports_credentials=True)
@@ -153,6 +158,7 @@ def get_status(attr_name):
         
         #retrive all the records with this id from the csv
         param = attr_name
+        print("Param : ", param)
         X = df_transformed.loc[:, df_transformed.columns != param]
         df_record = pd.read_csv("record.csv")
         # print(df_record)
@@ -175,7 +181,7 @@ def get_status(attr_name):
         attr = X.columns.tolist()
         # print(attr)
         # print(len(attr)==len(df_patient_trans.columns.tolist()))
-        n_neighbors = 10
+        n_neighbors = 5
         neigh = NearestNeighbors(n_neighbors=n_neighbors)
         d = dict()
         d['data'] = attr_data
@@ -184,7 +190,7 @@ def get_status(attr_name):
         d['max'] = []
         for index, r in df_patient_trans.iterrows():
             # print(index)
-            d['labels'].append(index)
+            d['labels'].append(int(index))
             row=[]
             # inner_d={}
             for i in attr:
@@ -196,24 +202,28 @@ def get_status(attr_name):
             ind = []
             for i in range(n_neighbors):
                 ind.append(neighbours[1][0][i])
+            print("indices",ind)
             df_nearest = df.iloc[ind]
+            print("Nearest neighbours retrieved:", df_nearest)
+            df_nearest.to_csv("Nearest_neighbours.csv")
             # inner_d["min"] = df_nearest[param].min()
             # inner_d["param"] = param
             # inner_d["max"] = df_nearest[param].max()
         
             # d[index] = inner_d
 
-            d['min'].append(df_nearest[param].min())
-            d['max'].append(df_nearest[param].max())
+            d['min'].append(df_nearest[param].min().item())
+            d['max'].append(df_nearest[param].max().item())
+            print(type(d['min'][0]))
 
-        # print("result d:",d)
+        print("result d:",d)
         #for each row in resulting df,for each attr, find 10 rows with least deviation w.r.t. other attributes, find min and max- return attr_val, min,max
         #return as dictionary of dictionaries
         #outer dictionary key will be timestamp
         #d[0] = {"attr1":x,"min":y,"max":z}
         #d[1] = {"attr2":x,"min":y,"max":z}
         
-        return jsonify(d), 200
+        return jsonify(d)
     else:
         return jsonify(), 405
 
