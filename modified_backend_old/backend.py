@@ -30,9 +30,7 @@ file_exists = os.path.isfile('record.csv')
 
 if not file_exists:
     print("Creating new record.csv")
-    #cols = ['nsrrid', 'ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'estrgn1', 'lipid1', 'minfa10', 'cgrtts10', 'climb125', 'wksblk25', 'wk1blk25', 'bathe25', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1', 'age_s1', 'stroke']
-    cols = ['nsrrid','ventrate','qrs','avhnoa3','oaroa5','systbp','diasbp','rest10','minfa10','shots10','cgrtts10','modact25','lift25','climbs25','climb125','wksblk25','wk1blk25','bathe25','hlthlm25',
-        'rawpf_s1','pf_s1','rawbp_s1','rawgh_s1','gh_s1','rawvt_s1','mh_s1','pcs_s1','mcs_s1','age_s1','bmi_s1','weight','height','stroke']
+    cols = ['nsrrid', 'ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'estrgn1', 'lipid1', 'minfa10', 'cgrtts10', 'climb125', 'wksblk25', 'wk1blk25', 'bathe25', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1', 'age_s1', 'stroke']
     with open('record.csv', 'w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(cols)
@@ -50,58 +48,19 @@ if not file_exists:
 def get_registration_variables():
     """ Needs to return {vars: list1, descriptions: list2}
     """
-    # l = ['nsrrid', 'ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'estrgn1', 'lipid1', 'minfa10', 'cgrtts10', 'climb125', 'wksblk25', 'wk1blk25', 'bathe25', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1', 'age_s1']
-    
-    categorical = ['wksblk25', 'wk1blk25', 'climb125', 'bathe25', 'rest10', 'modact25', 'lift25', 'climbs25', 'hlthlm25']
-    breathing = ['avhnoa3', 'oaroa5']
-    observed = ['systbp', 'diasbp', 'minfa10', 'cgrtts10', 'shots10', 'bmi_s1', 'weight', 'height', 'age_s1']
-    calculated = ['rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'rawbp_s1', 'mh_s1', 'pf_s1', 'gh_s1', 'pcs_s1', 'mcs_s1']
-    ecg = ['ventrate', 'qrs']
-
-    categorical_desc = ['Health limits walking several blocks', 'Health limits walking a single block',
-                    'Health limits climbing a flight of stairs', 'Health limits bathing and dressing',
-                    'Quality of sleep: restless/restful', 'Moderate activities, such as moving a table, pushing a vacuum cleaner, bowling, or playing golf',
-                    'Health limits Lifting or carrying groceries', 'Health limits climbing several flights of stairs', 'Health limited your social activities']
-    breathing_desc = ['Average Hypopnea length with >=3\% oxygen desaturation or arousal (Non-rapid eye movement sleep (NREM), Non-supine)', 
-                    'Number of Obstructive Apnea with >=5\% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)']
-    observed_desc = ['Seated Systolic Blood Pressure', 'Seated Diastolic Blood Pressure','Minutes taken to fall asleep the previous night','How many cigarettes 4 hours before going to\
-                sleep last night?', 'How many mixed drinks or shots of liquor 4 hours before going to sleep last night?', 'Body mass index', 'Weight in kilograms', 'Height in centimeters', 
-                'Age at time of test']
-    calculated_desc = ['Physical Functioning Raw Score', 'General Health Perceptions Raw Score', 'Vitality Raw Score', 'Pain Index Raw Score', 'Mental Health Index Standardized Score',
-                    'Physical Functioning Standardized Score', 'General Health Perceptions Standardized Score', 'Physical Component Scale Standardized Score', 'Mental Component Scale Standardized Score']
-    ecg_desc = ['Ventricular rate', 'QRS axis']
-
-    # # No Stroke default values
-    # categorical_default = ['0.0', '0.0', '0.0', '0.0', '0.0', '3.0', '2.0', '0.0', '4.0']
-    # breathing_default = ['25.0', '20.0']
-    # observed_default = ['132.0', '65.0', '10.0', '0.0', '0.0', '33.44', '103.0', '174.0', '61']
-    # calculated_default = ['28.88', '22.44', '18.0', '9.4', '76.0', '94.44', '87.0', '54.26', '54.01']
-    # ecg_default = ['55.0', '103.0']
-
-    # No Stroke default values
-    categorical_default = ['2.0', '2.0', '0.0', '2.0', '4.0', '2.0', '1.0', '0.0', '4.0']
-    breathing_default = ['12.0', '0.0']
-    observed_default = ['110.0', '71.0', '10.0', '0.0', '0.0', '37.792894936', '101.4', '164.4', '47']
-    calculated_default = ['20.0', '20.4', '21.0', '5.0', '84.0', '50.0', '77.0', '38.789104521', '49.901252965']
-    ecg_default = ['81.0','30.0']
-
-    l = ['nsrrid'] + categorical + breathing + observed + calculated + ecg
-    descriptions = ['NSRR Subject ID'] + categorical_desc + breathing_desc + observed_desc + calculated_desc + ecg_desc
-    defaults = ['1'] + categorical_default + breathing_default + observed_default + calculated_default + ecg_default
-
+    l = ['nsrrid', 'ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'estrgn1', 'lipid1', 'minfa10', 'cgrtts10', 'climb125', 'wksblk25', 'wk1blk25', 'bathe25', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1', 'age_s1']
     if request.method == 'GET':
         
-        # descriptions = ['NSRR Subject ID', 'Ventricular rate', 'QRS Axis', 'Average Central Apnea length w/ arousals (Non-rapid eye movement sleep (NREM), Supine, all oxygen desaturations)', 'Average Central Apnea length w/ arousals (Non-rapid eye movement sleep (NREM), Non-supine, all oxygen desaturations)', 'Average Central Apnea length (Rapid eye movement sleep (REM), Supine, >=2% oxygen desaturation)', 'Average Central Apnea length with >=2% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Average Central Apnea length with >=3% oxygen desaturation or arousal (Non-rapid eye movement sleep (NREM), Non-supine)', 'Average Central Apnea length with >=4% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Average Central Apnea length with >=5% oxygen desaturation or arousal (Non-rapid eye movement sleep (NREM), Supine)', 'Number of Obstructive Apnea with >=5% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Estrogens, Excluding Vaginal Creams ', 'Any Lipid-Lowering Medication ', 'Morning Survey : minutes to fall asleep', 'Morning Survey : cigarettes before bed', 'Quality of Life (QOL) : Health limits climbing one flight of stairs', 'Quality of Life (QOL) : Health limits walking several blocks', 'Quality of Life (QOL) : Health limits walking one block', 'Quality of Life (QOL) : Health limits bathing and dressing', 'Short Form 36 Health Survey (SF-36) Calculated : Physical Functioning Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : General Health Perceptions Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : Vitality Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : Mental Health Index Standardized Score', 'Age at Sleep Heart Health Study Visit One (SHHS1)']
+        descriptions = ['NSRR Subject ID', 'Ventricular rate', 'QRS Axis', 'Average Central Apnea length w/ arousals (Non-rapid eye movement sleep (NREM), Supine, all oxygen desaturations)', 'Average Central Apnea length w/ arousals (Non-rapid eye movement sleep (NREM), Non-supine, all oxygen desaturations)', 'Average Central Apnea length (Rapid eye movement sleep (REM), Supine, >=2% oxygen desaturation)', 'Average Central Apnea length with >=2% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Average Central Apnea length with >=3% oxygen desaturation or arousal (Non-rapid eye movement sleep (NREM), Non-supine)', 'Average Central Apnea length with >=4% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Average Central Apnea length with >=5% oxygen desaturation or arousal (Non-rapid eye movement sleep (NREM), Supine)', 'Number of Obstructive Apnea with >=5% oxygen desaturation or arousal (Rapid eye movement sleep (REM), Non-supine)', 'Estrogens, Excluding Vaginal Creams ', 'Any Lipid-Lowering Medication ', 'Morning Survey : minutes to fall asleep', 'Morning Survey : cigarettes before bed', 'Quality of Life (QOL) : Health limits climbing one flight of stairs', 'Quality of Life (QOL) : Health limits walking several blocks', 'Quality of Life (QOL) : Health limits walking one block', 'Quality of Life (QOL) : Health limits bathing and dressing', 'Short Form 36 Health Survey (SF-36) Calculated : Physical Functioning Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : General Health Perceptions Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : Vitality Raw Score', 'Short Form 36 Health Survey (SF-36) Calculated : Mental Health Index Standardized Score', 'Age at Sleep Heart Health Study Visit One (SHHS1)']
         
-        d = {'registration_variables': l, 'descriptions':descriptions, 'defaults': defaults}
+        d = {'registration_variables': l, 'descriptions':descriptions}
 
         return jsonify(d), 200
     
     elif request.method == 'POST':
         # user_data = request.get_json(force=True)
         # print(user_data)
-        l = ['nsrrid','ventrate','qrs','avhnoa3','oaroa5','systbp','diasbp','rest10','minfa10','shots10','cgrtts10','modact25','lift25','climbs25','climb125','wksblk25','wk1blk25','bathe25','hlthlm25',
-            'rawpf_s1','pf_s1','rawbp_s1','rawgh_s1','gh_s1','rawvt_s1','mh_s1','pcs_s1','mcs_s1','age_s1','bmi_s1','weight','height']
+        
         user_data = dict()
         values = []
         for i in l:
@@ -127,8 +86,7 @@ def get_registration_variables():
 
 @app.route('/graph_buttons', methods=['GET'])
 def get_graph_buttons():
-    l = ['ventrate','qrs','avhnoa3','oaroa5','systbp','diasbp','rest10','minfa10','shots10','cgrtts10','modact25','lift25','climbs25','climb125','wksblk25','wk1blk25','bathe25','hlthlm25',
-            'rawpf_s1','pf_s1','rawbp_s1','rawgh_s1','gh_s1','rawvt_s1','mh_s1','pcs_s1','mcs_s1','bmi_s1','weight']
+    l = ['ventrate', 'qrs', 'avcanba', 'avcanoa', 'avcarbp2', 'avcaroa2', 'avcanoa3', 'avcaroa4', 'avcanba5', 'oaroa5', 'rawpf_s1', 'rawgh_s1', 'rawvt_s1', 'mh_s1']
     if request.method == 'GET':
         
         d = {'registration_variables': l}

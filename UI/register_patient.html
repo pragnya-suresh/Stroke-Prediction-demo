@@ -36,6 +36,7 @@ function setup_registration_form(json_response){
     
     registration_vars = json_response['registration_variables']
     var_descriptions = json_response['descriptions']
+    default_values = json_response['defaults']
     // arr = ['nsrrid', 'week_no'];
     // arr = ['nsrrid'];
     // registration_vars = arr.concat(registration_vars)
@@ -58,7 +59,7 @@ function setup_registration_form(json_response){
         k = '<div class="form-group row">\
                 <label class="col-sm-2 col-form-label">'+ registration_vars[index] +'</label>\
                 <div class="col-sm-10">\
-                    <input type="text" name="'+registration_vars[index]+'" class="form-control" placeholder="'+var_descriptions[index]+'">\
+                    <input type="text" name="'+registration_vars[index]+'" class="form-control" placeholder="'+var_descriptions[index]+'" value="'+default_values[index]+'">\
                 </div>\
             </div>\n' 
         
